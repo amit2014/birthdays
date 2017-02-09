@@ -9,15 +9,14 @@ class Contact:
         self.birthday = birthday
         self.address = address
 
-    def setAddress(self,address):
-        self.address = address
-
     def setName(self,name):
         self.name = name
 
+    def setBirthday(self,birthday):
+        self.birthday = birthday
+
     def setAddress(self,address):
         self.address = address
-
 
 
 def main():
