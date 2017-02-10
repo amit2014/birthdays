@@ -35,6 +35,20 @@ class TestContactClass(unittest.TestCase):
         self.user = birthday.Contact("Harry","07-31-1980","4 Privet Drive, Little Whinging, Surrey")
 
 
+class TestDataRead(unittest.TestCase):
+
+    def setUp(self):
+        self.birthdays = birthday.getBirthdays("contacts.csv")
+
+    def testDictionaryCreate(self):
+        self.assertTrue(self.birthdays)
+
+    def testBirthdayInDict(self):
+        self.assertTrue("02-23-1977" in self.birthdays)
+
+    def testBirthdayNotInDict(self):
+        self.assertFalse("02-22-1977" in self.birthdays)
+
 
 
 if __name__ == '__main__':
