@@ -2,6 +2,8 @@
 
 import sys
 import csv
+from datetime import date
+from datetime import timedelta
 
 """
 Class for keeping track of user objects
@@ -55,6 +57,13 @@ def getBirthdays(contacts_file):
              
     return birthdays
 
+"""
+return string of today+3 days
+"""
+def futureBirthdays(today):
+    three_days = today + timedelta(days=3) #get date of 3 days from today
+    return three_days.strftime("%m-%d-%Y")
+
 
 def main():
     ###
@@ -67,7 +76,17 @@ def main():
         contacts_file = "contacts.csv"
     birthdays = getBirthdays(contacts_file)
 
-    #get current date
+    #get date 3 days in future; will send out cards today for people with birthdays in 3 days
+    today = date.today() #get current date as date object 
+    birthday_date = futureBirthdays(today)
+
+
+    
+
+
+
+#(format is MM-DD-YYYY)
+    
     #if current date == 3 days before friend's birthday
     #   if address object id not part of Contact object
     #       access lob

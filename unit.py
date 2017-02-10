@@ -3,7 +3,6 @@
 #libraries
 from datetime import datetime, timedelta
 import unittest
-import pytz #timezone
 #my modules
 import birthday
 
@@ -48,6 +47,15 @@ class TestDataRead(unittest.TestCase):
 
     def testBirthdayNotInDict(self):
         self.assertFalse("02-22-1977" in self.birthdays)
+
+
+class Test3DayDate(unittest.TestCase):
+
+    def testDate(self):
+        #test with an old date
+        date = datetime.strptime("02-09-2017","%m-%d-%Y") #create datetime object from chosen date string
+        future = birthday.futureBirthdays(date)
+        self.assertEqual(future,"02-12-2017")
 
 
 
