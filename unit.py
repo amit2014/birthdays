@@ -25,19 +25,19 @@ class TestContactClass(unittest.TestCase):
         self.assertEqual(self.user.state,"Surrey")
 
 
-class TestDataRead(unittest.TestCase):
+class TestStateAbbreviation(unittest.TestCase):
+    
+    def testLowerCase(self):
+        self.assertEqual(birthday.state_abbreviation("california"),"CA")
+    
+    def testCapitalizedCase(self):
+        self.assertEqual(birthday.state_abbreviation("California"),"CA")
 
-    def setUp(self):
-        self.birthdays = birthday.getBirthdays("contacts.csv")
+    def testUpperCase(self):
+        self.assertEqual(birthday.state_abbreviation("CALIFORNIA"),"CA")
 
-    def testDictionaryCreate(self):
-        self.assertTrue(self.birthdays)
-
-    def testBirthdayInDict(self):
-        self.assertTrue("02-23" in self.birthdays)
-
-    def testBirthdayNotInDict(self):
-        self.assertFalse("02-22" in self.birthdays)
+    def testWrongSpelling(self):
+        self.assertFalse(birthday.state_abbreviation("californa"))
 
 
 class Test3DayDate(unittest.TestCase):
