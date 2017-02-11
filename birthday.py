@@ -148,24 +148,27 @@ def futureBirthdays(today):
     return three_days.strftime("%m-%d")
 
 
-
 def main():
     #TODO: Check for flag at runtime that indicates if this is run by user or cron
     key = sys.argv[1]
-
     #log into Lob
     lob.api_key = key
     
-    contacts = get_contacts()
-    for friend in contacts:
-        lob_address = lob.Address.create(
-            name=friend.name,
-            address_line1=friend.street,
-            address_city=friend.city,
-            address_state=friend.state,
-            address_zip=friend.zipcode,
-            metadata={"birthday":friend.birthday}
-        )
+    if len(sys.argv)==3: #if flag specified at end, this is being run by cron; don't add new users
+        contacts = get_contacts()
+        for friend in contacts:
+            lob_address = lob.Address.create(
+                name=friend.name,
+                address_line1=friend.street,
+                address_city=friend.city,
+                address_state=friend.state,
+                address_zip=friend.zipcode,
+                metadata={"birthday":friend.birthday}
+            )
+
+        print "Please set this script to run every day with the command:"
+        print "python birthday.py <lob_api_key> -f"
+    #else:
         
 
     ##get date 3 days in future; will send out cards today for people with birthdays in 3 days
