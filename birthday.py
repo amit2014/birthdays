@@ -6,6 +6,10 @@ import lob
 from datetime import date
 from datetime import timedelta
 
+#GLOBAL
+key = sys.argv[1]
+lob.api_key = key
+
 """
 Class for keeping track of user objects
 """
@@ -101,20 +105,37 @@ def get_state():
         return state
             
 
+"""
+"""
+def get_user_address():
+    print "First, please enter your name and address below."
+    name = raw_input("\nName: ")
+    street = raw_input("Street Address: ")
+    city = raw_input("City: ")
+    state = get_state()
+    zipcode = raw_input("Zip Code: ")
+    print "\nPlease verify the your address: "
+    print name
+    print street + ", "+city+", "+state+" "+zipcode
+    if (raw_input("\nIs this correct? ").lower()=="yes"):
+        lob_address = lob.Address.create(
+            name=name,
+            address_line1=street,
+            address_city=city,
+            address_state=state,
+            address_zip=zipcode,
+            metadata={"user":True}
+        )
+    else:
+        print "Please re-enter your information."
+        get_user_address()
+
 
 """
 Prompt user to enter info about contacts
 Return a list of Contact objects
 """
 def get_contacts():
-    print """Welcome to the Automated Birthday Card Sender!\nEnter your contacts at the prompt. Please stick to the following guidelines when entering contacts:
-    Name: Dennis Reynolds
-    Street Address: 2253 Bastin Drive
-    City: Philadelphia
-    State: PA (Pennsylvania is also acceptable)
-    Zip Code: 19108
-    Birthday: 01-31-2001"""
-
     contacts = []
     more_contacts = True
     while more_contacts:
@@ -149,14 +170,18 @@ def futureBirthdays(today):
 
 
 def main():
-    #TODO: Check for flag at runtime that indicates if this is run by user or cron
-    key = sys.argv[1]
-    #log into Lob
-    lob.api_key = key
-    
-    if len(sys.argv)==3: #if flag specified at end, this is being run by cron; don't add new users
+    if len(sys.argv)==2: #person is manually running program 
+        print """Welcome to the Automated Birthday Card Sender!\nEnter your contacts at the prompt. Please stick to the following guidelines when entering contacts:
+    Name: Dennis Reynolds
+    Street Address: 2253 Bastin Drive
+    City: Philadelphia
+    State: PA (Pennsylvania is also acceptable)
+    Zip Code: 19108
+    Birthday: 01-31-2001"""
+        if (raw_input("\nAre you a new user? ").lower()=="yes"):
+            get_user_address()
         contacts = get_contacts()
-        for friend in contacts:
+        for friend in contacts: #add contacts to lob address book
             lob_address = lob.Address.create(
                 name=friend.name,
                 address_line1=friend.street,
@@ -168,23 +193,25 @@ def main():
 
         print "Please set this script to run every day with the command:"
         print "python birthday.py <lob_api_key> -f"
-    #else:
+    else:   #if flag specified at end, this is being run by cron; don't add new users
+        #get date 3 days in future; will send out cards today for people with birthdays in 3 days
+        birthday_date = futureBirthdays(date.today()) #get string of date 3 days from today (format is MM-DD)
+
+        #use list all addresses function in lob api to search for addresses that have matching metadata for birthday
+        birthdays = lob.Address.list(metadata={'birthday':birthday_date}) 
+        my_address = lob.Address.list(metadata={'user':True})
+        if birthdays.count:
+            for birthday in birthdays.data:
+                print birthday
+                #lob.Postcard.create(
+                #    to_address = birthday,
+                #    from_address = my_address.data[0],
+                
+        else:
+            print 'no birthdays'
         
-
-    ##get date 3 days in future; will send out cards today for people with birthdays in 3 days
-    #birthday_date = futureBirthdays(date.today()) #get string of date 3 days from today (format is MM-DD)
-
-    ##check birthdays dict for birthday_date
-    #if birthday_date in birthdays:
-    #    lob.api_key = key
-    #    for friend in birthdays[birthday_date]: #loop through list of Contact objects
-    #        if friend.adr_: #if user has a Lob address ID assigned to them (already in Lob address book)
-    #            lob_address = lob.Address.retrieve(friend.adr_)
-    #        else:
-    #            #create new address in Lob
-    #            lob_address = createLobAddress(friend)
-    #            #TODO: Save to CSV file or database
-    #    #send postcard
+        
+        
 
 
 if __name__ == "__main__":

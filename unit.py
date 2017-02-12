@@ -1,9 +1,10 @@
 #!/usr/bin/env
 
 #libraries
-from datetime import datetime, timedelta
+import sys
 import unittest
 import lob
+from datetime import datetime, timedelta
 #my modules
 import birthday
 
@@ -47,19 +48,6 @@ class Test3DayDate(unittest.TestCase):
         date = datetime.strptime("02-09","%m-%d") #create datetime object from chosen date string
         future = birthday.futureBirthdays(date)
         self.assertEqual(future,"02-12")
-
-#class TestLobAddress(unittest.TestCase):
-#
-#    def setUp(self):
-#        self.user = birthday.Contact("Harry Potter","07-31","4 Privet Drive","Little Whinging","Surrey","55555")
-#    
-#    def testCreateLobAddress(self):
-#        address = birthday.createLobAddress(self.user)
-#        self.user.setAdr_(address.id)
-#        self.assertEqual(address.id,lob.Address.retrieve(friend.adr_).id)
-#
-#    def tearDown(self):
-#        lob.Address.delete(self.user.adr_)
 
 
 if __name__ == '__main__':
