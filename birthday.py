@@ -108,7 +108,6 @@ def get_state():
 """
 """
 def get_user_address():
-    print "First, please enter your name and address below."
     name = raw_input("\nName: ")
     street = raw_input("Street Address: ")
     city = raw_input("City: ")
@@ -179,7 +178,9 @@ def main():
     Zip Code: 19108
     Birthday: 01-31-2001"""
         if (raw_input("\nAre you a new user? ").lower()=="yes"):
+            print "First, please enter your name and address below."
             get_user_address()
+        print "Please enter the information for each contact you wish to send a birthday card to."
         contacts = get_contacts()
         for friend in contacts: #add contacts to lob address book
             lob_address = lob.Address.create(
@@ -202,11 +203,14 @@ def main():
         my_address = lob.Address.list(metadata={'user':True})
         if birthdays.count:
             for birthday in birthdays.data:
-                print birthday
-                #lob.Postcard.create(
-                #    to_address = birthday,
-                #    from_address = my_address.data[0],
-                
+                lob.Postcard.create(
+                    to_address = birthday,
+                    from_address = my_address.data[0],
+                    front = '<html style="padding: 1in; font-size: 50;">Front HTML for {{name}}</html>',
+                    back = '<html style="padding: 1in; font-size: 20;">Back HTML for {{name}}</html>',
+                    data = {"name":birthday.name}
+                )
+                print "Birthday postcard sent to "+birthday.name
         else:
             print 'no birthdays'
         
